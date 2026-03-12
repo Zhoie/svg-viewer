@@ -1,4 +1,4 @@
-# Codex Harness for `svgviewer`
+# Codex Harness for `svg-viewer`
 
 This repository uses a long-running Codex harness. Every fresh Codex session must use the checked-in repo artifacts below rather than relying on hidden prior context.
 
