@@ -44,6 +44,170 @@ function convertAttributeName(name: string) {
   );
 }
 
+function findTagEnd(source: string, startIndex: number) {
+  let index = startIndex + 1;
+  let activeQuote: string | null = null;
+
+  while (index < source.length) {
+    const character = source[index];
+
+    if (activeQuote) {
+      if (character === activeQuote) {
+        activeQuote = null;
+      }
+
+      index += 1;
+      continue;
+    }
+
+    if (character === `"` || character === "'") {
+      activeQuote = character;
+      index += 1;
+      continue;
+    }
+
+    if (character === ">") {
+      return index;
+    }
+
+    index += 1;
+  }
+
+  return source.length - 1;
+}
+
+function transformTagSegment(segment: string) {
+  if (
+    segment.startsWith("</") ||
+    segment.startsWith("<?") ||
+    segment.startsWith("<!")
+  ) {
+    return segment;
+  }
+
+  let index = 1;
+  let result = "<";
+  const tagNameStart = index;
+
+  while (
+    index < segment.length &&
+    !/\s/.test(segment[index]) &&
+    segment[index] !== ">" &&
+    segment[index] !== "/"
+  ) {
+    index += 1;
+  }
+
+  result += segment.slice(tagNameStart, index);
+
+  while (index < segment.length) {
+    if (segment.startsWith("/>", index)) {
+      result += "/>";
+      index += 2;
+      continue;
+    }
+
+    const character = segment[index];
+
+    if (character === ">") {
+      result += ">";
+      index += 1;
+      continue;
+    }
+
+    if (/\s/.test(character)) {
+      const whitespaceStart = index;
+
+      while (index < segment.length && /\s/.test(segment[index])) {
+        index += 1;
+      }
+
+      result += segment.slice(whitespaceStart, index);
+      continue;
+    }
+
+    if (character === "=") {
+      result += "=";
+      index += 1;
+      continue;
+    }
+
+    if (character === `"` || character === "'") {
+      const quote = character;
+      const valueStart = index;
+      index += 1;
+
+      while (index < segment.length && segment[index] !== quote) {
+        index += 1;
+      }
+
+      if (index < segment.length) {
+        index += 1;
+      }
+
+      result += segment.slice(valueStart, index);
+      continue;
+    }
+
+    const attributeStart = index;
+
+    while (
+      index < segment.length &&
+      !/\s/.test(segment[index]) &&
+      segment[index] !== "=" &&
+      segment[index] !== ">" &&
+      segment[index] !== "/"
+    ) {
+      index += 1;
+    }
+
+    result += convertAttributeName(segment.slice(attributeStart, index));
+  }
+
+  return result;
+}
+
+function formatSourcePreservedJsx(source: string) {
+  let index = 0;
+  let result = "";
+
+  while (index < source.length) {
+    if (source.startsWith("<!--", index)) {
+      const commentEnd = source.indexOf("-->", index + 4);
+      const safeEnd = commentEnd === -1 ? source.length : commentEnd + 3;
+      result += source.slice(index, safeEnd);
+      index = safeEnd;
+      continue;
+    }
+
+    if (source[index] !== "<") {
+      result += source[index];
+      index += 1;
+      continue;
+    }
+
+    const tagEnd = findTagEnd(source, index);
+    result += transformTagSegment(source.slice(index, tagEnd + 1));
+    index = tagEnd + 1;
+  }
+
+  return result;
+}
+
+function canPreserveSourceFormatting(
+  source: string,
+  sanitizedSvg: string,
+  warnings: Set<string>,
+  sourceRoot: Element,
+) {
+  if (warnings.size > 0 || !/^<svg(?=[\s>])/i.test(source)) {
+    return false;
+  }
+
+  const serializer = new XMLSerializer();
+  return serializer.serializeToString(sourceRoot) === sanitizedSvg;
+}
+
 function formatJsxNode(node: Node, depth = 0): string[] {
   const indent = "  ".repeat(depth);
 
@@ -166,7 +330,7 @@ function sanitizeElement(
     if (childNode.nodeType === Node.TEXT_NODE) {
       const textContent = childNode.textContent;
 
-      if (textContent?.trim()) {
+      if (textContent !== null) {
         sanitizedElement.appendChild(targetDocument.createTextNode(textContent));
       }
     }
@@ -214,7 +378,14 @@ export function sanitizeSvg(source: string): SanitizeResult {
 
   const serializer = new XMLSerializer();
   const sanitizedSvg = serializer.serializeToString(targetDocument);
-  const reactCode = formatJsxNode(sanitizedRoot).join("\n");
+  const reactCode = canPreserveSourceFormatting(
+    trimmed,
+    sanitizedSvg,
+    warnings,
+    root,
+  )
+    ? formatSourcePreservedJsx(trimmed)
+    : formatJsxNode(sanitizedRoot).join("\n");
 
   return {
     ok: true,

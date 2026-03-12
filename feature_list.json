@@ -23,7 +23,7 @@
       "Uncheck React and verify the JSX output section disappears",
       "Re-check React and verify the JSX output section returns"
     ],
-    "passes": true
+    "passes": false
   },
   {
     "id": "viewer-copy-react-jsx",
@@ -62,6 +62,154 @@
       "Verify the editor and output panels appear side-by-side without page scrolling",
       "Open the app at a mobile viewport such as 390x844",
       "Verify the editor and output panels stack vertically without page scrolling"
+    ],
+    "passes": false
+  },
+  {
+    "id": "project-hyphenated-name",
+    "category": "metadata",
+    "priority": 1,
+    "description": "The project metadata and harness docs use the hyphenated name `svg-viewer`.",
+    "steps": [
+      "Inspect the root package metadata",
+      "Verify the package name is `svg-viewer` in both `package.json` and `package-lock.json`",
+      "Verify the checked-in harness docs identify the repo as `svg-viewer`",
+      "Confirm the checked-in package metadata and harness docs no longer use the old `svgviewer` name"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-tabbed-output-and-highlighted-editor",
+    "category": "ux",
+    "priority": 1,
+    "description": "The workbench uses one shared output viewport with Preview, React, and PNG tabs while the editor highlights SVG syntax and keeps the last valid output visible.",
+    "steps": [
+      "Open the app home page",
+      "Verify the output panel shows Preview, React, and PNG tabs above one shared viewport",
+      "Verify Preview renders the default SVG, React shows JSX output, and PNG shows a raster preview without changing panels",
+      "Verify the source editor visually distinguishes tags, attribute names, and attribute values while still accepting typed input",
+      "Replace the editor contents with malformed SVG markup and verify an inline error appears while the last valid Preview and PNG remain visible"
+    ],
+    "passes": false
+  },
+  {
+    "id": "viewer-permanent-react-tab-and-resizable-visual-preview",
+    "category": "ux",
+    "priority": 1,
+    "description": "The output panel keeps Preview, React, and PNG as permanent tabs and adds a shared size slider that enlarges Preview and PNG without overflowing the viewport.",
+    "steps": [
+      "Open the app home page",
+      "Verify the output header no longer shows the old Live chip or React checkbox",
+      "Verify Preview, React, and PNG tabs are always visible",
+      "Verify a shared size slider is visible in the output toolbar",
+      "Verify the default Preview render is much larger than the intrinsic 24x24 icon",
+      "Adjust the size slider and verify Preview and PNG resize together without overflowing their stage",
+      "Verify the React tab keeps copy-ready JSX output and does not resize its code text when the slider changes"
+    ],
+    "passes": false
+  },
+  {
+    "id": "viewer-trim-helper-copy",
+    "category": "ux",
+    "priority": 1,
+    "description": "The workbench removes non-essential helper copy from the header, editor footer, and output panel while preserving actionable warning and error states.",
+    "steps": [
+      "Open the app home page",
+      "Verify the header no longer shows the long explanatory paragraph under the title",
+      "Verify the editor footer no longer shows the syntax-highlighting helper copy or the neutral sanitization note",
+      "Verify the output panel no longer shows a default neutral helper notice under the viewport",
+      "Replace the editor contents with malformed SVG markup and verify the inline error state still appears"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-panel-grid-and-reflowed-output-controls",
+    "category": "ux",
+    "priority": 1,
+    "description": "The Source and Output panels use a shared outer grid treatment while the inner code/image viewports stay clear, and the output controls become full-width rows above and below the viewport.",
+    "steps": [
+      "Open the app home page",
+      "Verify the Source and Output panel bodies share the same outer grid treatment",
+      "Verify the actual code viewport is solid with no grid behind the syntax-highlighted text",
+      "Verify the actual Preview and PNG viewport is solid with no grid behind the rendered art",
+      "Verify the Preview, React, and PNG controls appear in a full-width row above the viewport",
+      "Verify the Size slider appears in a full-width row below the viewport for Preview and PNG",
+      "Verify the Size slider is visually hidden on React while its row height remains reserved",
+      "Verify malformed SVG still shows the inline error while the last valid output remains visible"
+    ],
+    "passes": false
+  },
+  {
+    "id": "viewer-bottom-actions-neutral-workareas-and-source-preserved-react",
+    "category": "ux",
+    "priority": 1,
+    "description": "The workbench moves Copy and Download below the viewport, neutralizes the code and preview work areas, preserves the user's valid source structure in JSX output, and gives the Output panel more height on mobile.",
+    "steps": [
+      "Open the app home page",
+      "Verify the top control row contains only Preview, React, and PNG tabs",
+      "Verify the Size row appears below the viewport and Copy or Download appears in a separate action row below that",
+      "Verify the Preview action row stays reserved but empty",
+      "Verify the actual code and image work areas use neutral gray or white surfaces with no blue tint",
+      "Verify the React tab shows JSX-only output that preserves the user's line breaks and attribute order while converting React-safe attributes",
+      "Verify malformed SVG still shows the inline error while the last valid output remains visible",
+      "Verify the mobile layout at 390x844 gives the Output panel enough height to display the image without clipping into the bottom rows"
+    ],
+    "passes": false
+  },
+  {
+    "id": "viewer-svg-png-react-tab-order",
+    "category": "ux",
+    "priority": 1,
+    "description": "The output tabs are labeled SVG, PNG, and React in that order.",
+    "steps": [
+      "Open the app home page",
+      "Verify the top output tabs read SVG, PNG, and React from left to right",
+      "Verify the first tab shows the live SVG render",
+      "Verify the middle tab shows the PNG preview",
+      "Verify the right tab shows the React JSX output"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-adaptive-medium-mobile-workbench-layout",
+    "category": "ux",
+    "priority": 1,
+    "description": "The workbench stacks earlier, allows page scrolling on medium and mobile screens, keeps Source compact, and gives Output more vertical space without clipping the viewport or controls.",
+    "steps": [
+      "Open the app at 1365x900 and verify the workbench stays side-by-side without page scrolling",
+      "Open the app at 992x1131 and 768x1024 and verify the layout stacks vertically with page scrolling enabled",
+      "Verify the Output panel is visibly taller than Source on stacked layouts and that the viewport is not clipped by the size or action rows",
+      "Open the app at 390x844 and verify the SVG/PNG viewport remains clearly visible above the bottom controls",
+      "Verify the SVG, PNG, and React tabs still work and that Copy and Download PNG remain aligned under the viewport"
+    ],
+    "passes": false
+  },
+  {
+    "id": "viewer-calm-output-workflow-motion",
+    "category": "ux",
+    "priority": 1,
+    "description": "The output workflow uses calm, precise motion for tab switching, viewport swaps, slider visibility, and copy feedback while respecting reduced-motion preferences.",
+    "steps": [
+      "Open the app home page and switch between SVG, PNG, and React",
+      "Verify the active tab highlight moves cleanly and the viewport uses a short fade and slight translate transition",
+      "Verify the Size row still hides on React with a subtle reserved-space transition",
+      "Click Copy on the React tab and verify the Copied state uses a short success transition",
+      "Verify Download PNG keeps simple hover and press feedback without fake success animation",
+      "Verify reduced-motion mode disables decorative workflow motion"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-medium-desktop-two-column-shell",
+    "category": "ux",
+    "priority": 1,
+    "description": "Medium desktop widths use the same two-column, full-height shell as large screens instead of stacking Source and Output vertically.",
+    "steps": [
+      "Open the app at a medium desktop viewport such as 992x1131",
+      "Verify Source and Output render side by side in two columns",
+      "Verify the page does not scroll vertically and the shell uses the full viewport height",
+      "Verify the output viewport, size row, and action row all remain visible without clipping",
+      "Verify the mobile layout still remains stacked below the desktop breakpoint"
     ],
     "passes": true
   }

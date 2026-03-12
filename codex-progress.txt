@@ -5,3 +5,73 @@ files touched: AGENTS.md, init.sh, feature_list.json, codex-progress.txt, README
 checks run: npm run lint, npm run build, browser smoke test for default preview, React toggle, copy action, malformed SVG handling
 open issues: working tree already contains unrelated in-progress app changes; future sessions must avoid reverting unrelated edits
 recommended next feature: none; all currently tracked baseline features pass until the user requests a new product change
+2026-03-12T20:21:49Z | branch: main
+startup verification: passed via Playwright CLI smoke test at http://127.0.0.1:3000; verified title, default preview, React checkbox, and malformed SVG recovery before implementation
+feature worked on: project-hyphenated-name
+files touched: AGENTS.md, README.md, feature_list.json, package.json, package-lock.json, codex-progress.txt
+checks run: npm run lint, node -p "require('./package.json').name", rg -n "svgviewer" -S AGENTS.md README.md package.json package-lock.json, Playwright CLI smoke test for title/default preview/React checkbox/malformed SVG handling
+open issues: none
+recommended next feature: none; all currently tracked features currently pass
+2026-03-12T20:38:54Z | branch: main
+startup verification: passed via Playwright at http://127.0.0.1:3000; verified title, default preview visibility, React checkbox, and malformed SVG recovery before implementation
+feature worked on: viewer-tabbed-output-and-highlighted-editor
+files touched: app/svg-workbench.tsx, app/globals.css, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification for Preview/React/PNG shared viewport, React toggle hide/restore, copy feedback, malformed SVG persistence, desktop 1280x800 no-scroll, mobile 390x844 no-scroll, computed token colors in editor, curl -I http://127.0.0.1:3000/favicon.ico
+open issues: favicon request was already satisfied by the existing served 24x24 app/favicon.ico; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; all currently tracked features pass
+2026-03-12T20:54:32Z | branch: main
+startup verification: passed via Playwright at http://127.0.0.1:3000; verified title, existing Preview/React/PNG tabs, the old output-header Live chip and React checkbox targeted for removal, and malformed SVG recovery before implementation
+feature worked on: viewer-permanent-react-tab-and-resizable-visual-preview
+files touched: app/svg-workbench.tsx, app/globals.css, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification for permanent Preview/React/PNG tabs, removed Live chip and React checkbox, shared size slider at 35% and 100%, Preview and PNG size updates without overflow, React code font staying fixed while slider changes, copy feedback, malformed SVG persistence with disabled copy, desktop 1280x800 no-scroll, mobile 390x844 no-scroll, keyboard focus order React tab -> slider -> Copy, and no browser console errors
+open issues: viewer-react-output-toggle is now intentionally false in feature_list.json because the React checkbox behavior was removed by product design; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the only remaining non-passing tracked record is the intentionally retired viewer-react-output-toggle behavior
+2026-03-12T20:58:36Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the current workbench state before trimming helper copy
+feature worked on: viewer-trim-helper-copy
+files touched: app/svg-workbench.tsx, app/globals.css, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification that the header helper paragraph, editor helper footer copy, neutral sanitization note, and output helper notice are absent while malformed SVG still shows the inline editor error
+open issues: viewer-react-output-toggle remains intentionally false in feature_list.json because that checkbox behavior was removed by product design; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the only remaining non-passing tracked record is the intentionally retired viewer-react-output-toggle behavior
+2026-03-12T21:07:55Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the current workbench structure before relocating the grid treatment and reflowing the output controls
+feature worked on: viewer-panel-grid-and-reflowed-output-controls
+files touched: app/svg-workbench.tsx, app/globals.css, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification that Source and Output share the same outer grid treatment, the inner code and image viewports stay clear, the top control row and bottom size row both match the viewport width, the size slider grows Preview and PNG, React hides the slider after a light transition while preserving the row height, Copy still works, PNG still renders, malformed SVG preserves the last valid preview, mobile 390x844 has no overflow, reduced-motion disables viewport animation, and the browser console has no errors
+open issues: viewer-react-output-toggle remains intentionally false in feature_list.json because that checkbox behavior was removed by product design; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the only remaining non-passing tracked record is the intentionally retired viewer-react-output-toggle behavior
+2026-03-12T21:24:36Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the current bottom-row, React-output, and mobile layout behavior before implementation
+feature worked on: viewer-bottom-actions-neutral-workareas-and-source-preserved-react
+files touched: app/lib/svg-utils.ts, app/svg-workbench.tsx, app/globals.css, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification that the top row contains only tabs, Size sits below the viewport, Copy and Download PNG appear in a separate bottom action row, Preview keeps an empty reserved action row, Source and Preview/PNG work areas are neutral rather than blue-tinted, safe custom SVG input preserves source line breaks and attribute order in JSX while converting class/className and hyphenated SVG attributes, warning-producing input falls back to sanitized JSX, malformed SVG keeps the last valid output visible and disables Copy, mobile 390x844 gives Output a larger viewport without clipping into the bottom rows, and the browser console has no errors
+open issues: viewer-panel-grid-and-reflowed-output-controls is now intentionally false in feature_list.json because its accepted control placement predates the new bottom action row; viewer-react-output-toggle remains intentionally false because that checkbox behavior was removed by product design; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the only remaining non-passing tracked records are intentionally retired behaviors
+2026-03-12T21:31:54Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the page title plus the current output tabs before applying the rename and reorder
+feature worked on: viewer-svg-png-react-tab-order
+files touched: app/svg-workbench.tsx, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification that the output tabs read SVG, PNG, and React from left to right, that SVG remains the default live render, that PNG remains the middle raster preview, and that React remains the JSX output tab
+open issues: viewer-tabbed-output-and-highlighted-editor, viewer-permanent-react-tab-and-resizable-visual-preview, and viewer-bottom-actions-neutral-workareas-and-source-preserved-react are now intentionally false in feature_list.json because their accepted tab labels no longer match the renamed SVG/PNG/React product; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the remaining non-passing tracked records are stale historical expectations rather than active product gaps
+2026-03-12T21:45:04Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the page title, default SVG render, and malformed-SVG recovery before adapting the layout model
+feature worked on: viewer-adaptive-medium-mobile-workbench-layout
+files touched: app/globals.css, app/svg-workbench.tsx, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification at 1365x900 for wide two-column no-scroll layout, at 992x1131 and 768x1024 for stacked scrollable layout with taller Output, at 390x844 for stacked mobile layout with visible viewport above Size and action rows, SVG/PNG/React tab behavior, Copy and Download PNG visibility, malformed SVG recovery, overlap checks, and zero browser console errors
+open issues: viewer-responsive-single-screen-layout is now intentionally false in feature_list.json because medium and mobile screens now allow page scrolling by design; viewer-react-output-toggle and several Preview-named records remain false because they reflect retired behavior or stale acceptance text from earlier product iterations; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the remaining non-passing tracked records are historical expectations rather than current product defects
+2026-03-12T21:53:12Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the page title, default SVG output tab, and malformed-SVG recovery before adding workflow motion
+feature worked on: viewer-calm-output-workflow-motion
+files touched: app/globals.css, app/svg-workbench.tsx, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification that the tab highlight moves across SVG/PNG/React, the viewport uses the viewport-enter animation in no-preference mode, the Size row still hides on React, the Copy button exposes a copied success state, Download PNG remains a plain action without copied state, malformed SVG still preserves the last valid SVG render, reduced-motion mode disables indicator and viewport motion, and the browser console reports zero errors
+open issues: viewer-responsive-single-screen-layout remains intentionally false because medium and mobile screens currently allow page scrolling by design; viewer-react-output-toggle and several historical Preview-named records remain false because they reflect retired behavior or stale acceptance text from earlier product iterations; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the remaining non-passing tracked records are historical expectations rather than current product defects
+2026-03-12T21:55:37Z | branch: main
+startup verification: reused the running app at http://127.0.0.1:3000 and verified the current breakpoint behavior, page title, default SVG render, and malformed-SVG recovery before shifting the medium desktop shell
+feature worked on: viewer-medium-desktop-two-column-shell
+files touched: app/globals.css, feature_list.json, codex-progress.txt
+checks run: npm run lint, npm run build, Playwright verification at 1365x900 for existing wide two-column no-scroll layout, at 992x1131 for medium two-column no-scroll layout, at 900x1000 for stacked scrollable sub-desktop layout, at 390x844 for stacked mobile layout, SVG/PNG/React tab behavior, Download PNG and Copy visibility, malformed SVG recovery, and zero browser console errors
+open issues: viewer-adaptive-medium-mobile-workbench-layout is now intentionally false because medium widths no longer stack by design; viewer-responsive-single-screen-layout remains false because mobile still scrolls by design; viewer-react-output-toggle and several historical Preview-named records remain false because they reflect retired behavior or stale acceptance text from earlier product iterations; unrelated metadata edits from earlier sessions remain uncommitted in AGENTS.md, README.md, package.json, and package-lock.json
+recommended next feature: none; the remaining non-passing tracked records are historical expectations rather than current product defects
