@@ -1,26 +1,412 @@
-@import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(0.982 0.006 95.4);
+  --background-strong: oklch(0.993 0.003 95.4);
+  --panel: color-mix(in oklab, white 92%, #eff2ff 8%);
+  --panel-muted: color-mix(in oklab, white 84%, #e4e8f7 16%);
+  --foreground: oklch(0.283 0.02 257.5);
+  --muted: oklch(0.541 0.016 255.3);
+  --line: color-mix(in oklab, var(--foreground) 14%, white 86%);
+  --line-strong: color-mix(in oklab, var(--foreground) 24%, white 76%);
+  --accent: oklch(0.582 0.183 260.4);
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, white 88%);
+  --danger: oklch(0.625 0.211 25.7);
+  --warning: oklch(0.704 0.146 79.1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
+}
+
+html {
+  background:
+    radial-gradient(circle at top, rgba(102, 132, 255, 0.14), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(247, 247, 244, 0.94));
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.workbench-shell {
+  height: 100dvh;
+  overflow: hidden;
+  padding: clamp(1rem, 1.5vw, 1.5rem);
+}
+
+.workbench-frame {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  height: 100%;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.58)),
+    var(--background-strong);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 28px 70px rgba(31, 43, 66, 0.08);
+  padding: clamp(1rem, 2vw, 1.75rem);
+}
+
+.workbench-header {
+  display: grid;
+  gap: 0.8rem;
+  align-items: start;
+}
+
+.workbench-copy {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 48rem;
+}
+
+.eyebrow,
+.panel-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.workbench-copy h1 {
+  margin: 0;
+  max-width: 20ch;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.workbench-note {
+  margin: 0;
+  max-width: 43rem;
+  color: var(--muted);
+  font-size: clamp(0.98rem, 1.3vw, 1.05rem);
+  line-height: 1.6;
+}
+
+.workbench-grid {
+  min-height: 0;
+  display: grid;
+  gap: clamp(0.85rem, 1.4vw, 1.15rem);
+  grid-template-rows: minmax(0, 1.02fr) minmax(0, 0.98fr);
+}
+
+.panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  padding: clamp(0.9rem, 1.4vw, 1rem);
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(250, 250, 248, 0.9)),
+    var(--panel);
+}
+
+.panel-preview {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.panel-topline,
+.react-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panel-topline > div,
+.react-header > div {
+  min-width: 0;
+}
+
+.panel-caption,
+.footer-meta,
+.notice {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+.panel-caption,
+.footer-meta {
+  color: var(--muted);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.3rem;
+  padding: 0.42rem 0.68rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 22%, white 78%);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.panel-body,
+.preview-stack,
+.preview-surface,
+.preview-stage,
+.react-section {
+  min-height: 0;
+}
+
+.panel-body {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.panel-body-editor {
+  display: flex;
+}
+
+.code-surface {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(246, 247, 250, 0.92)),
+    var(--panel-muted);
+  color: var(--foreground);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.editor-surface {
+  resize: none;
+  padding: 1rem 1rem 1.15rem;
+  overflow: auto;
+}
+
+.editor-surface:focus-visible,
+.copy-button:focus-visible,
+.toggle input:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--accent) 70%, white 30%);
+  outline-offset: 2px;
+}
+
+.panel-footer {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.notice {
+  padding: 0.7rem 0.8rem;
+  border-left: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.notice-error {
+  border-color: var(--danger);
+  color: color-mix(in oklab, var(--danger) 82%, black 18%);
+}
+
+.notice-warning {
+  border-color: var(--warning);
+  color: color-mix(in oklab, var(--warning) 70%, black 30%);
+}
+
+.notice-neutral {
+  border-color: var(--line-strong);
+  color: var(--muted);
+}
+
+.preview-stack,
+.react-section {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.preview-stack-react {
+  grid-template-rows: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+
+.preview-stack-solo {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.react-section {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.preview-surface {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(0deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.9)),
+    var(--panel-muted);
+  padding: 1rem;
+}
+
+.preview-stage {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 12rem;
+  padding: clamp(1rem, 1.8vw, 1.5rem);
+  border: 1px dashed color-mix(in oklab, var(--line-strong) 84%, white 16%);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.56) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.56) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(238, 241, 251, 0.7), rgba(255, 255, 255, 0.9));
+  background-size: 1.4rem 1.4rem, 1.4rem 1.4rem, cover;
+}
+
+.preview-svg {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-svg :where(svg) {
+  width: auto;
+  max-width: min(100%, 18rem);
+  height: auto;
+  max-height: 100%;
+  display: block;
+  color: var(--foreground);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+
+.copy-button {
+  border: 1px solid var(--line-strong);
+  background: white;
+  color: var(--foreground);
+  padding: 0.58rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition:
+    border-color 140ms ease,
+    color 140ms ease,
+    background-color 140ms ease;
+}
+
+.copy-button:hover:enabled {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.copy-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.output-surface,
+.empty-surface {
+  height: 100%;
+  overflow: auto;
+}
+
+.output-surface {
+  padding: 1rem;
+}
+
+.empty-surface {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  color: var(--muted);
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(246, 247, 250, 0.92)),
+    var(--panel-muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 960px) {
+  .workbench-header {
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+    justify-content: space-between;
+  }
+
+  .workbench-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .workbench-shell {
+    padding: 0.75rem;
+  }
+
+  .workbench-frame {
+    padding: 0.85rem;
+  }
+
+  .panel,
+  .preview-surface {
+    padding: 0.8rem;
+  }
+
+  .panel-topline,
+  .react-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .toggle,
+  .copy-button {
+    align-self: flex-start;
+  }
 }

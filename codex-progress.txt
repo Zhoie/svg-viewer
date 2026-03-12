@@ -1,0 +1,7 @@
+2026-03-13T00:00:00Z | branch: main
+startup verification: verified the current SVG viewer behavior through lint, build, and browser checks before bootstrapping the harness
+feature worked on: codex-harness-bootstrap
+files touched: AGENTS.md, init.sh, feature_list.json, codex-progress.txt, README.md
+checks run: npm run lint, npm run build, browser smoke test for default preview, React toggle, copy action, malformed SVG handling
+open issues: working tree already contains unrelated in-progress app changes; future sessions must avoid reverting unrelated edits
+recommended next feature: none; all currently tracked baseline features pass until the user requests a new product change

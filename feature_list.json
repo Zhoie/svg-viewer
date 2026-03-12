@@ -1,0 +1,68 @@
+[
+  {
+    "id": "viewer-default-preview",
+    "category": "functional",
+    "priority": 1,
+    "description": "The app shows the default SVG preview on first load.",
+    "steps": [
+      "Open the app home page",
+      "Verify the editor contains inline SVG markup",
+      "Verify the preview panel renders the default image icon"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-react-output-toggle",
+    "category": "functional",
+    "priority": 1,
+    "description": "The React checkbox controls whether JSX output is shown.",
+    "steps": [
+      "Open the app home page",
+      "Verify the React checkbox is visible in the output panel",
+      "Verify JSX output is visible by default",
+      "Uncheck React and verify the JSX output section disappears",
+      "Re-check React and verify the JSX output section returns"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-copy-react-jsx",
+    "category": "functional",
+    "priority": 1,
+    "description": "A valid SVG can be converted to React-safe JSX and copied.",
+    "steps": [
+      "Open the app home page",
+      "Confirm the JSX output includes React-safe attributes such as strokeWidth and className",
+      "Click Copy",
+      "Verify the copy action succeeds and the button shows copied feedback"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-invalid-svg-error-state",
+    "category": "functional",
+    "priority": 1,
+    "description": "Malformed SVG input shows an inline error, disables copy, and preserves the last valid preview.",
+    "steps": [
+      "Open the app home page",
+      "Replace the editor contents with malformed SVG markup",
+      "Verify an inline error message appears",
+      "Verify the Copy button is disabled",
+      "Verify the preview still shows the last valid SVG render"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-responsive-single-screen-layout",
+    "category": "ux",
+    "priority": 2,
+    "description": "The workbench stays usable on desktop and mobile without page-level overflow.",
+    "steps": [
+      "Open the app at a desktop viewport such as 1280x800",
+      "Verify the editor and output panels appear side-by-side without page scrolling",
+      "Open the app at a mobile viewport such as 390x844",
+      "Verify the editor and output panels stack vertically without page scrolling"
+    ],
+    "passes": true
+  }
+]
