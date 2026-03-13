@@ -1,5 +1,7 @@
 This is the `svg-viewer` Next.js workbench for pasting inline SVG, previewing the render, and converting valid markup into React-safe JSX.
 
+Example website: [svg.chor.dev](https://svg.chor.dev)
+
 ## Getting Started
 
 First, run the development server:

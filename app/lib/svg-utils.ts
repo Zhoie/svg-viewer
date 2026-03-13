@@ -44,6 +44,13 @@ function convertAttributeName(name: string) {
   );
 }
 
+function indentBlock(source: string, indent: string) {
+  return source
+    .split("\n")
+    .map((line) => `${indent}${line}`)
+    .join("\n");
+}
+
 function findTagEnd(source: string, startIndex: number) {
   let index = startIndex + 1;
   let activeQuote: string | null = null;
@@ -192,6 +199,54 @@ function formatSourcePreservedJsx(source: string) {
   }
 
   return result;
+}
+
+function injectRootPropsSpread(jsxMarkup: string) {
+  const rootStart = jsxMarkup.search(/<svg(?=[\s>])/i);
+
+  if (rootStart === -1) {
+    return jsxMarkup;
+  }
+
+  const rootTagEnd = findTagEnd(jsxMarkup, rootStart);
+  const rootTag = jsxMarkup.slice(rootStart, rootTagEnd + 1);
+
+  if (rootTag.includes("{...props}")) {
+    return jsxMarkup;
+  }
+
+  const rootIndent =
+    jsxMarkup.slice(0, rootStart).match(/(?:^|\n)([ \t]*)$/)?.[1] ?? "";
+  const attributeIndent = rootTag.match(/\n([ \t]+)\S/)?.[1] ?? "";
+  let nextRootTag = rootTag;
+
+  if (rootTag.endsWith("/>")) {
+    nextRootTag = attributeIndent
+      ? `${rootTag.slice(0, -2)}\n${attributeIndent}{...props}\n${rootIndent}/>`
+      : `${rootTag.slice(0, -2)} {...props} />`;
+  } else {
+    nextRootTag = attributeIndent
+      ? `${rootTag.slice(0, -1)}\n${attributeIndent}{...props}\n${rootIndent}>`
+      : `${rootTag.slice(0, -1)} {...props}>`;
+  }
+
+  return `${jsxMarkup.slice(0, rootStart)}${nextRootTag}${jsxMarkup.slice(
+    rootTagEnd + 1,
+  )}`;
+}
+
+function formatReactComponentCode(jsxMarkup: string) {
+  const wrappedJsx = injectRootPropsSpread(jsxMarkup.trim());
+
+  return [
+    'import * as React from "react";',
+    "",
+    "const SVGComponent = (props) => (",
+    indentBlock(wrappedJsx, "  "),
+    ");",
+    "",
+    "export default SVGComponent;",
+  ].join("\n");
 }
 
 function canPreserveSourceFormatting(
@@ -378,7 +433,7 @@ export function sanitizeSvg(source: string): SanitizeResult {
 
   const serializer = new XMLSerializer();
   const sanitizedSvg = serializer.serializeToString(targetDocument);
-  const reactCode = canPreserveSourceFormatting(
+  const jsxCode = canPreserveSourceFormatting(
     trimmed,
     sanitizedSvg,
     warnings,
@@ -390,7 +445,7 @@ export function sanitizeSvg(source: string): SanitizeResult {
   return {
     ok: true,
     sanitizedSvg,
-    reactCode,
+    reactCode: formatReactComponentCode(jsxCode),
     warnings: Array.from(warnings),
   };
 }

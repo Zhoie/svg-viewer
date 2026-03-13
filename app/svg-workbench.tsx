@@ -20,16 +20,24 @@ const DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="
   <circle cx="9" cy="9" r="2" />
   <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
 </svg>`;
-const DEFAULT_REACT = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-image-icon lucide-image">
-  <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-  <circle cx="9" cy="9" r="2" />
-  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-</svg>`;
+const DEFAULT_REACT = `import * as React from "react";
+
+const SVGComponent = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-image-icon lucide-image" {...props}>
+    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+    <circle cx="9" cy="9" r="2" />
+    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+  </svg>
+);
+
+export default SVGComponent;`;
 const DEFAULT_STAGE_SIZE = {
   width: 360,
   height: 280,
 };
+const VISUAL_VIEWPORT_INSET = 32;
 const DEFAULT_PREVIEW_SCALE_PERCENT = 72;
+const COMPACT_PREVIEW_SCALE_PERCENT = 56;
 const MIN_PREVIEW_SCALE_PERCENT = 35;
 const MAX_PREVIEW_SCALE_PERCENT = 100;
 
@@ -37,6 +45,36 @@ const OUTPUT_TABS = [
   { id: "preview", label: "SVG" },
   { id: "png", label: "PNG" },
   { id: "react", label: "React" },
+] as const;
+const ICON_RESOURCES = [
+  {
+    id: "lucide",
+    label: "Lucide Icons",
+    href: "https://lucide.dev/icons/",
+    iconSrc: "https://lucide.dev/favicon.ico",
+    mark: "L",
+  },
+  {
+    id: "iconoir",
+    label: "Iconoir",
+    href: "https://iconoir.com",
+    iconSrc: "https://iconoir.com/favicon.ico",
+    mark: "I",
+  },
+  {
+    id: "phosphor",
+    label: "Phosphor Icons",
+    href: "https://phosphoricons.com",
+    iconSrc: "https://phosphoricons.com/favicon.ico",
+    mark: "P",
+  },
+  {
+    id: "heroicons",
+    label: "Heroicons",
+    href: "https://heroicons.com",
+    iconSrc: "https://heroicons.com/favicon.ico",
+    mark: "H",
+  },
 ] as const;
 
 type OutputTab = (typeof OUTPUT_TABS)[number]["id"];
@@ -334,8 +372,9 @@ export function SvgWorkbench() {
   const [previewScalePercent, setPreviewScalePercent] = useState(
     DEFAULT_PREVIEW_SCALE_PERCENT,
   );
+  const [hasManualScaleSelection, setHasManualScaleSelection] = useState(false);
   const [observedVisualStageNode, setObservedVisualStageNode] =
-    useState<HTMLDivElement | null>(null);
+    useState<HTMLElement | null>(null);
   const [visualStageSize, setVisualStageSize] =
     useState<FrameSize>(DEFAULT_STAGE_SIZE);
   const [error, setError] = useState<string | null>(null);
@@ -355,10 +394,16 @@ export function SvgWorkbench() {
   const isVisualTab = activeTab !== "react";
   const svgFrame = resolveSvgFrame(lastValidSvg);
   const pngFrame = resolveRasterDimensions(lastValidSvg);
+  const resolvedPreviewScalePercent =
+    !hasManualScaleSelection &&
+    visualStageSize.height < 180 &&
+    previewScalePercent === DEFAULT_PREVIEW_SCALE_PERCENT
+      ? COMPACT_PREVIEW_SCALE_PERCENT
+      : previewScalePercent;
   const fittedVisualFrame = fitFrameWithinBounds(svgFrame, visualStageSize);
   const scaledVisualFrame = scaleFrame(
     fittedVisualFrame,
-    previewScalePercent,
+    resolvedPreviewScalePercent,
   );
   const visualFrameStyle = {
     width: `${scaledVisualFrame.width}px`,
@@ -373,17 +418,18 @@ export function SvgWorkbench() {
       return;
     }
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
+    let frameId: number | null = null;
 
-      if (!entry) {
+    const syncStageSize = () => {
+      const rect = observedVisualStageNode.getBoundingClientRect();
+      const nextSize = {
+        width: Math.max(Math.floor(rect.width - VISUAL_VIEWPORT_INSET), 1),
+        height: Math.max(Math.floor(rect.height - VISUAL_VIEWPORT_INSET), 1),
+      };
+
+      if (nextSize.width < 24 || nextSize.height < 24) {
         return;
       }
-
-      const nextSize = {
-        width: Math.max(Math.floor(entry.contentRect.width), 1),
-        height: Math.max(Math.floor(entry.contentRect.height), 1),
-      };
 
       setVisualStageSize((previousSize) =>
         previousSize.width === nextSize.width &&
@@ -391,10 +437,19 @@ export function SvgWorkbench() {
           ? previousSize
           : nextSize,
       );
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      syncStageSize();
     });
 
     resizeObserver.observe(observedVisualStageNode);
+    frameId = window.requestAnimationFrame(syncStageSize);
+
     return () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
       resizeObserver.disconnect();
     };
   }, [observedVisualStageNode]);
@@ -446,7 +501,7 @@ export function SvgWorkbench() {
 
     copyTimeoutRef.current = window.setTimeout(() => {
       setCopied(false);
-    }, 1400);
+    }, 700);
   }
 
   function handleSourceChange(nextSource: string) {
@@ -480,6 +535,7 @@ export function SvgWorkbench() {
   }
 
   function handleScaleChange(event: ChangeEvent<HTMLInputElement>) {
+    setHasManualScaleSelection(true);
     setPreviewScalePercent(Number(event.target.value));
   }
 
@@ -492,10 +548,11 @@ export function SvgWorkbench() {
           data-view="preview"
           id={activePanelId}
           key={activeTab}
+          ref={setObservedVisualStageNode}
           role="tabpanel"
         >
           <div className="preview-surface">
-            <div className="preview-stage" ref={setObservedVisualStageNode}>
+            <div className="preview-stage">
               <div className="visual-frame visual-frame-svg" style={visualFrameStyle}>
                 <div
                   className="preview-svg"
@@ -516,10 +573,11 @@ export function SvgWorkbench() {
           data-view="png"
           id={activePanelId}
           key={activeTab}
+          ref={setObservedVisualStageNode}
           role="tabpanel"
         >
           <div className="preview-surface">
-            <div className="preview-stage" ref={setObservedVisualStageNode}>
+            <div className="preview-stage">
               {pngDataUrl ? (
                 <NextImage
                   alt="PNG preview generated from the current SVG"
@@ -693,10 +751,10 @@ export function SvgWorkbench() {
                         min={MIN_PREVIEW_SCALE_PERCENT}
                         onChange={handleScaleChange}
                         type="range"
-                        value={previewScalePercent}
+                        value={resolvedPreviewScalePercent}
                       />
                       <output className="size-control-value" htmlFor={scaleSliderId}>
-                        {previewScalePercent}%
+                        {resolvedPreviewScalePercent}%
                       </output>
                     </label>
                   </div>
@@ -735,6 +793,33 @@ export function SvgWorkbench() {
             </div>
           </article>
         </section>
+
+        <footer className="workbench-resources" aria-label="Icon resources">
+          {ICON_RESOURCES.map((resource) => (
+            <a
+              className="resource-chip"
+              href={resource.href}
+              key={resource.id}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <span aria-hidden="true" className="resource-chip-mark">
+                <span className="resource-chip-fallback">{resource.mark}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  className="resource-chip-icon"
+                  height="16"
+                  loading="lazy"
+                  src={resource.iconSrc}
+                  width="16"
+                />
+              </span>
+              <span className="resource-chip-label">{resource.label}</span>
+            </a>
+          ))}
+        </footer>
       </div>
     </main>
   );

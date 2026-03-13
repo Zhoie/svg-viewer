@@ -57,8 +57,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -79,15 +78,17 @@ button {
 }
 
 .workbench-shell {
-  min-height: 100dvh;
+  height: 100dvh;
   padding: var(--shell-padding);
+  overflow: hidden;
 }
 
 .workbench-frame {
   display: grid;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: var(--frame-gap);
-  min-height: calc(100dvh - (var(--shell-padding) * 2));
+  height: 100%;
+  min-height: 0;
   border: 1px solid var(--line);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.58)),
@@ -133,14 +134,16 @@ button {
 .workbench-grid {
   display: grid;
   gap: var(--frame-gap);
-  grid-template-rows: auto auto;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
 }
 
 .panel {
   display: grid;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: var(--panel-gap);
   padding: var(--panel-padding);
+  min-height: 0;
   border: 1px solid var(--line);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(250, 250, 248, 0.9)),
@@ -150,11 +153,11 @@ button {
 
 .panel-editor-with-footer,
 .panel-preview {
-  grid-template-rows: auto auto;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .panel-editor-with-footer {
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 .panel-topline {
@@ -215,13 +218,16 @@ button {
   display: flex;
   overflow: hidden;
   padding: 0.9rem;
-  block-size: var(--source-body-size);
+  block-size: auto;
+  height: 100%;
 }
 
 .panel-body-output {
-  display: flex;
+  display: grid;
   overflow: hidden;
   padding: 0.9rem;
+  block-size: auto;
+  height: 100%;
 }
 
 .panel-body-grid {
@@ -344,13 +350,25 @@ button {
 
 .output-panel-body {
   display: grid;
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   width: 100%;
+  height: 100%;
+  min-height: 100%;
   gap: 0.85rem;
 }
 
 .output-slot {
   min-width: 0;
+  min-height: 0;
+}
+
+.output-slot-viewport {
+  display: flex;
+  min-height: 0;
+}
+
+.output-slot-viewport > .output-viewport {
+  flex: 1;
 }
 
 .tablist {
@@ -426,18 +444,12 @@ button {
   background: transparent;
   box-shadow: none;
   color: var(--accent-strong);
-  transform: translateY(-1px);
 }
 
 .tab-button:hover,
 .copy-button:hover {
   border-color: color-mix(in oklab, var(--accent) 44%, white 56%);
   color: var(--accent-strong);
-}
-
-.tab-button:hover,
-.copy-button:hover:enabled {
-  transform: translateY(-1px);
 }
 
 .tab-button:active,
@@ -530,8 +542,12 @@ button {
 }
 
 .output-viewport {
+  display: flex;
   border: 1px solid var(--line);
-  block-size: var(--output-viewport-size);
+  block-size: auto;
+  height: 100%;
+  min-height: clamp(8.5rem, 18vh, 13rem);
+  overflow: hidden;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(249, 249, 250, 0.99));
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.84) inset,
@@ -544,13 +560,17 @@ button {
 }
 
 .preview-surface {
+  display: flex;
+  flex: 1;
   height: 100%;
+  min-height: 0;
   padding: 0.85rem;
   background: linear-gradient(180deg, rgba(254, 254, 254, 0.99), rgba(249, 249, 250, 0.99));
 }
 
 .preview-stage {
   display: grid;
+  flex: 1;
   place-items: center;
   width: 100%;
   height: 100%;
@@ -560,6 +580,85 @@ button {
   border: 1px solid color-mix(in oklab, var(--line-strong) 88%, white 12%);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 248, 249, 0.99));
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.86) inset;
+}
+
+.workbench-resources {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.1rem;
+  scrollbar-width: thin;
+}
+
+.resource-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.35rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--foreground);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  transition:
+    border-color var(--motion-state-duration) var(--ease-out-quart),
+    color var(--motion-state-duration) var(--ease-out-quart),
+    transform var(--motion-feedback-duration) var(--ease-out-quart),
+    box-shadow var(--motion-state-duration) var(--ease-out-quart);
+}
+
+.resource-chip:hover {
+  border-color: color-mix(in oklab, var(--accent) 38%, white 62%);
+  color: var(--accent-strong);
+}
+
+.resource-chip:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.resource-chip-icon {
+  position: absolute;
+  inset: 0;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.resource-chip-mark {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in oklab, var(--accent) 18%, white 82%);
+  background: color-mix(in oklab, var(--accent) 10%, white 90%);
+  color: var(--accent-strong);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.resource-chip-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.resource-chip-label {
+  display: inline-block;
 }
 
 .visual-frame {
@@ -586,6 +685,7 @@ button {
 
 .output-surface,
 .empty-surface {
+  flex: 1;
   height: 100%;
   overflow: auto;
 }
@@ -732,33 +832,23 @@ button {
 
 @media (min-width: 721px) and (max-width: 959px) {
   :root {
-    --source-body-size: clamp(10rem, 18vh, 13rem);
-    --output-viewport-size: clamp(21rem, 54vh, 35rem);
+    --frame-padding: 0.9rem;
+    --frame-gap: 0.75rem;
+    --panel-padding: 0.68rem;
+    --panel-gap: 0.65rem;
   }
 
   .workbench-copy h1 {
     max-width: 17ch;
     font-size: clamp(2rem, 4.6vw, 2.85rem);
   }
+
+  .workbench-header {
+    gap: 0.35rem;
+  }
 }
 
 @media (min-width: 960px) {
-  body {
-    overflow: hidden;
-  }
-
-  .workbench-shell {
-    height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .workbench-frame {
-    grid-template-rows: auto minmax(0, 1fr);
-    height: 100%;
-    min-height: 0;
-  }
-
   .workbench-header {
     grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
     justify-content: space-between;
@@ -772,37 +862,18 @@ button {
   .workbench-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
-    min-height: 0;
-  }
-
-  .panel,
-  .panel-preview {
-    min-height: 0;
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .panel-editor-with-footer {
-    grid-template-rows: auto minmax(0, 1fr) auto;
-  }
-
-  .panel-body-editor,
-  .panel-body-output {
-    block-size: auto;
-    min-height: 0;
-  }
-
-  .output-panel-body {
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
-    height: 100%;
-  }
-
-  .output-viewport {
-    block-size: auto;
-    min-height: 0;
   }
 
   .preview-stage {
     min-height: clamp(15rem, 34vh, 26rem);
+  }
+
+  .workbench-resources {
+    justify-content: start;
+  }
+
+  .output-viewport {
+    min-height: 0;
   }
 }
 
@@ -820,13 +891,7 @@ button {
     --frame-gap: 0.58rem;
     --panel-padding: 0.62rem;
     --panel-gap: 0.62rem;
-    --source-body-size: clamp(8.75rem, 15vh, 11rem);
-    --output-viewport-size: clamp(18rem, 41vh, 22rem);
     --preview-stage-padding: 0.6rem;
-  }
-
-  .workbench-shell {
-    min-height: 100dvh;
   }
 
   .workbench-copy {
@@ -894,6 +959,27 @@ button {
   .output-action-spacer {
     min-height: 2.3rem;
   }
+
+  .workbench-resources {
+    gap: 0.5rem;
+  }
+
+  .resource-chip {
+    min-height: 2.15rem;
+    padding: 0.46rem 0.68rem;
+    font-size: 0.84rem;
+  }
+
+  .resource-chip-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .resource-chip-mark {
+    width: 1.08rem;
+    height: 1.08rem;
+    font-size: 0.64rem;
+  }
 }
 
 .sr-only {
@@ -912,6 +998,7 @@ button {
   .tablist::before,
   .tab-button,
   .copy-button,
+  .resource-chip,
   .size-row-content,
   .output-viewport {
     transition: none;

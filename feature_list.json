@@ -63,7 +63,7 @@
       "Open the app at a mobile viewport such as 390x844",
       "Verify the editor and output panels stack vertically without page scrolling"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "project-hyphenated-name",
@@ -210,6 +210,50 @@
       "Verify the page does not scroll vertically and the shell uses the full viewport height",
       "Verify the output viewport, size row, and action row all remain visible without clipping",
       "Verify the mobile layout still remains stacked below the desktop breakpoint"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-live-icon-footer-and-fixed-small-screen-split",
+    "category": "ux",
+    "priority": 1,
+    "description": "The live app shows external icon resource links in a compact footer bar, and screens below 960px use a fixed no-scroll stacked layout where Source and Output split the workspace 50/50.",
+    "steps": [
+      "Open the app at 1365x900 and verify the app remains two-column without page scrolling",
+      "Verify the live UI shows footer links for Lucide Icons, Iconoir, Phosphor Icons, and Heroicons with an icon before each label",
+      "Open the app at 900x1000 and verify Source and Output stack vertically while each occupies half the available workspace height",
+      "Verify the page does not scroll at 900x1000 and that Source and Output scroll internally when needed",
+      "Open the app at 390x844 and verify the same fixed stacked 50/50 layout with a compact horizontally usable footer",
+      "Verify SVG, PNG, and React tabs still work and malformed SVG still preserves the last valid output"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-no-lift-hover-feedback",
+    "category": "ux",
+    "priority": 1,
+    "description": "Interactive workbench controls use color and highlight feedback on hover without visually hopping upward.",
+    "steps": [
+      "Open the app home page",
+      "Hover the SVG, PNG, and React tabs and verify they do not move upward",
+      "Hover the Copy or Download action button and verify it does not move upward",
+      "Hover the footer resource chips and verify they do not move upward",
+      "Verify the active tab still feels selected via color and highlight rather than lift",
+      "Click or tap the same controls and verify the small pressed-state feedback still works"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-react-component-output-and-faster-copy-feedback",
+    "category": "ux",
+    "priority": 1,
+    "description": "The React tab outputs a full copy-ready React component wrapper instead of raw JSX, and the Copied feedback clears faster.",
+    "steps": [
+      "Open the app home page and switch to the React tab",
+      "Verify the output begins with `import * as React from \"react\";` and includes `const SVGComponent = (props) => (`",
+      "Verify the root `<svg>` includes `{...props}` and the output ends with `export default SVGComponent;`",
+      "Paste a different valid SVG and verify the React output updates into the same component form with React-safe attributes",
+      "Click Copy and verify the button changes to Copied, then returns to Copy noticeably faster than before"
     ],
     "passes": true
   }
