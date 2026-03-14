@@ -22,7 +22,7 @@ Run these steps in order before any implementation work:
    - open the URL reported by `init.sh`
    - verify the page title is `SVG Viewer Workbench`
    - verify the default SVG preview is visible
-   - verify the `React` checkbox exists
+   - verify the `React` tab exists
    - paste malformed SVG and confirm an error appears while the last valid preview remains visible
 7. Only after the smoke test passes, choose exactly one highest-priority non-passing feature to work on.
 

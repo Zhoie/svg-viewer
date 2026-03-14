@@ -226,7 +226,7 @@
       "Open the app at 390x844 and verify the same fixed stacked 50/50 layout with a compact horizontally usable footer",
       "Verify SVG, PNG, and React tabs still work and malformed SVG still preserves the last valid output"
     ],
-    "passes": true
+    "passes": false
   },
   {
     "id": "viewer-no-lift-hover-feedback",
@@ -254,6 +254,32 @@
       "Verify the root `<svg>` includes `{...props}` and the output ends with `export default SVGComponent;`",
       "Paste a different valid SVG and verify the React output updates into the same component form with React-safe attributes",
       "Click Copy and verify the button changes to Copied, then returns to Copy noticeably faster than before"
+    ],
+    "passes": true
+  },
+  {
+    "id": "viewer-small-screen-output-controls-clear-stack",
+    "category": "ux",
+    "priority": 1,
+    "description": "On stacked small-screen layouts, the output viewport, size slider, and action row stay in a clear vertical stack with no overlap into the preview area.",
+    "steps": [
+      "Open the app at 390x844 and verify the output viewport is fully visible with the Size slider below it and no overlap into the rendered SVG",
+      "Open the app at 700x900 and 900x1000 and verify the same clear output stack on the small-screen layout",
+      "Verify the page still avoids page-level scrolling on these stacked layouts",
+      "Paste malformed SVG markup and verify the inline error still appears while the last valid output remains visible"
+    ],
+    "passes": true
+  },
+  {
+    "id": "dev-server-127-loopback-origin-allowed",
+    "category": "developer-experience",
+    "priority": 1,
+    "description": "The Next.js dev server explicitly allows the repo's 127.0.0.1 loopback origin so internal `/_next/*` requests no longer emit the allowedDevOrigins warning.",
+    "steps": [
+      "Start the app with `bash ./init.sh`",
+      "Request a `/_next/*` dev resource with the Origin header set to `http://127.0.0.1:<port>`",
+      "Verify the request succeeds without logging the cross-origin allowedDevOrigins warning",
+      "Open the app in a browser and verify the default SVG preview still renders"
     ],
     "passes": true
   }

@@ -848,6 +848,24 @@ button {
   }
 }
 
+@media (max-width: 959px) {
+  .workbench-grid {
+    grid-template-rows: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  }
+
+  .panel-body-output {
+    padding: 0.7rem;
+  }
+
+  .output-panel-body {
+    gap: 0.6rem;
+  }
+
+  .output-viewport {
+    min-height: clamp(4.75rem, 10.5vh, 6.75rem);
+  }
+}
+
 @media (min-width: 960px) {
   .workbench-header {
     grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
