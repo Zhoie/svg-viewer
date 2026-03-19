@@ -282,5 +282,18 @@
       "Open the app in a browser and verify the default SVG preview still renders"
     ],
     "passes": true
+  },
+  {
+    "id": "framework-nextjs-16-2-upgrade",
+    "category": "developer-experience",
+    "priority": 1,
+    "description": "The project runs on Next.js 16.2.0 with matching Next lint tooling and still passes the harness smoke test.",
+    "steps": [
+      "Inspect `package.json` and `package-lock.json` and verify `next` and `eslint-config-next` are set to `16.2.0`",
+      "Run `npm run lint` and `npm run build` and verify both succeed",
+      "Start the app with `bash ./init.sh`",
+      "Open the running app in a browser and verify the page title is `SVG Viewer Workbench`, the default SVG preview is visible, the `React` tab exists, and malformed SVG still shows an error while the last valid preview remains visible"
+    ],
+    "passes": true
   }
 ]

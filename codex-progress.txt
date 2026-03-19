@@ -110,3 +110,10 @@ files touched: next.config.ts, feature_list.json, codex-progress.txt
 checks run: npm run lint; requested a real /_next/static asset with Origin: http://127.0.0.1:3000 and verified a 200 response plus no allowedDevOrigins warning in .next/codex-harness/dev-server.log; headless Chrome DevTools Protocol smoke check verified SVG Viewer Workbench title, default SVG preview visibility, React tab presence, and malformed-SVG recovery
 open issues: viewer-live-icon-footer-and-fixed-small-screen-split and several older Preview-named or React-checkbox records remain false because they describe retired behavior from earlier iterations rather than the current product
 recommended next feature: none; the remaining non-passing tracked records are still historical expectations rather than active product gaps
+2026-03-19T18:52:40Z | branch: main
+startup verification: passed via Playwright CLI at http://127.0.0.1:3001 before implementation, then restarted the dev server on the same URL after the dependency bump and re-verified the page title, default SVG preview, React tab, and malformed-SVG recovery against the fresh Next.js 16.2.0 process
+feature worked on: framework-nextjs-16-2-upgrade
+files touched: feature_list.json, package.json, package-lock.json, codex-progress.txt
+checks run: npm view next@16.2.0 version; npm view eslint-config-next@16.2.0 version; npm run lint; npm run build; bash ./init.sh; Playwright CLI smoke checks before and after restart verifying SVG Viewer Workbench title, default SVG preview visibility, React tab presence, and malformed SVG inline error while the last valid preview remained visible
+open issues: npm audit currently reports 1 high severity vulnerability in the dependency tree; several older feature_list.json records remain false because they describe retired behavior or stale acceptance text from earlier iterations
+recommended next feature: none unless the user requests additional product work; the remaining non-passing tracked records are historical expectations rather than active product gaps
